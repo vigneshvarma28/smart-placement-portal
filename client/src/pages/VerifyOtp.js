@@ -6,56 +6,101 @@ import { toast } from "react-toastify";
 function VerifyOtp() {
   const location = useLocation();
   const navigate = useNavigate();
+  const initialEmail = location.state?.email || sessionStorage.getItem("verifyEmail") || "";
   const [form, setForm] = useState({
-    email: location.state?.email || "",
+    email: initialEmail,
     otp: "",
   });
+  const [devCode, setDevCode] = useState(location.state?.devOtp || null);
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
 
   useEffect(() => {
     if (!form.email) {
-      toast.warning("Please enter your email to continue.");
-      // If no email in state, we might want to keep the input or redirect
+      toast.warning("Please enter your registered email to verify your account.");
     }
   }, [form.email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email) {
-      toast.error("Email is missing. Try registering again.");
+      toast.error("Email is required.");
+      return;
+    }
+    if (!form.otp || form.otp.length !== 6) {
+      toast.warning("Please enter the 6-digit OTP code.");
       return;
     }
     setLoading(true);
 
     try {
-      await API.post("/auth/verify-otp", form);
-      toast.success("Account Verified! Please Login.");
+      const { data } = await API.post("/auth/verify-otp", {
+        email: form.email.trim(),
+        otp: form.otp.trim(),
+      });
+      sessionStorage.removeItem("verifyEmail");
+      toast.success(data.msg || "Account Verified! Please Login.");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data?.msg || "Verification Failed");
+      toast.error(error.response?.data?.msg || "Verification Failed. Check your OTP.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!form.email) {
+      toast.warning("Please enter your email first");
+      return;
+    }
+    setResending(true);
+    try {
+      const { data } = await API.post("/auth/resend-otp", { email: form.email.trim() });
+      if (data.devOtp && !data.emailSent) {
+        setDevCode(data.devOtp);
+        toast.info(`🔑 New Verification OTP: ${data.devOtp}`, { autoClose: 10000 });
+      }
+      toast.success(data.msg || "New OTP sent!");
+    } catch (error) {
+      toast.error(error.response?.data?.msg || "Failed to resend OTP");
+    } finally {
+      setResending(false);
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Verify Account</h2>
+        <h2>✅ Verify Account</h2>
         <p className="auth-subtitle">
-          Enter the OTP sent to <br />
-          <strong style={{ color: 'var(--primary)', fontSize: '1rem' }}>{form.email || "your email"}</strong>
+          Enter the 6-digit OTP sent to <br />
+          <strong style={{ color: 'var(--primary)', fontSize: '1rem' }}>{form.email || "your registered email"}</strong>
         </p>
 
+        {devCode && (
+          <div style={{
+            background: 'rgba(99, 102, 241, 0.1)',
+            border: '1px solid rgba(99, 102, 241, 0.3)',
+            padding: '12px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            textAlign: 'center',
+            color: '#818cf8',
+            fontSize: '0.9rem'
+          }}>
+            🔑 Verification Code: <strong style={{ letterSpacing: '3px', fontSize: '1.2rem', color: '#c7d2fe' }}>{devCode}</strong>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
-          {!location.state?.email && (
+          {!initialEmail && (
             <input
               type="email"
               placeholder="Enter your registered email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
-              style={{ marginBottom: '20px' }}
+              style={{ marginBottom: '15px' }}
             />
           )}
 
@@ -66,16 +111,37 @@ function VerifyOtp() {
             onChange={(e) => setForm({ ...form, otp: e.target.value })}
             required
             maxLength="6"
+            autoFocus
             style={{ letterSpacing: '8px', textAlign: 'center', fontSize: '1.5rem', fontWeight: 'bold' }}
           />
 
           <button type="submit" className="auth-btn" disabled={loading}>
             {loading ? "Verifying..." : "Verify & Login"}
           </button>
+
+          <div style={{ textAlign: 'center', marginTop: '15px' }}>
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending || loading}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary)',
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                textDecoration: 'underline'
+              }}
+            >
+              {resending ? "Sending New Code..." : "Didn't get the code? Resend OTP"}
+            </button>
+          </div>
         </form>
 
-        <p className="auth-footer">
-          <span onClick={() => navigate("/")}>Back to Login</span>
+        <p className="auth-footer" style={{ marginTop: '20px' }}>
+          <button className="auth-secondary-btn" onClick={() => navigate("/")}>
+            Back to Login
+          </button>
         </p>
       </div>
     </div>
