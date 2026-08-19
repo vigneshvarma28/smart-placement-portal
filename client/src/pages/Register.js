@@ -33,13 +33,8 @@ function Register() {
       const { data } = await API.post("/auth/register", payload);
 
       sessionStorage.setItem("verifyEmail", form.email);
-      toast.success(data.msg || "OTP sent! Please verify your account.");
-
-      if (data.devOtp && !data.emailSent) {
-        toast.info(`🔑 Verification OTP: ${data.devOtp}`, { autoClose: 10000 });
-      }
-
-      navigate("/verify-otp", { state: { email: form.email, devOtp: data.devOtp } });
+      toast.success(data.msg || "OTP sent to your email! Please check your inbox.");
+      navigate("/verify-otp", { state: { email: form.email } });
 
     } catch (error) {
       toast.error(error.response?.data?.msg || "Registration Failed");
