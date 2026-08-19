@@ -83,6 +83,25 @@ function CompanyLogin() {
                         </button>
                     </div>
 
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-5px', marginBottom: '15px' }}>
+                        <button
+                            type="button"
+                            onClick={() => navigate("/forgot-password")}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#0f172a',
+                                cursor: 'pointer',
+                                fontSize: '0.85rem',
+                                fontWeight: '600',
+                                padding: '0',
+                                textDecoration: 'none'
+                            }}
+                        >
+                            Forgot Password?
+                        </button>
+                    </div>
+
                     <button type="submit" className="auth-btn" disabled={loading} style={{ background: '#0f172a' }}>
                         {loading ? "Verifying..." : "Login to Dashboard"}
                     </button>
