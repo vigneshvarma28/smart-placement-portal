@@ -12,7 +12,6 @@ function ForgotPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [devCode, setDevCode] = useState(null);
   const navigate = useNavigate();
 
   // Step 1: Submit email / username to receive reset code
@@ -27,11 +26,7 @@ function ForgotPassword() {
     try {
       const { data } = await API.post("/auth/forgot-password", { identifier: identifier.trim() });
       setEmail(data.email);
-      if (data.devOtp && !data.emailSent) {
-        setDevCode(data.devOtp);
-        toast.info(`🔑 Reset Code: ${data.devOtp}`, { autoClose: 10000 });
-      }
-      toast.success(data.msg || "Password reset code sent!");
+      toast.success(data.msg || "Password reset code sent to your email!");
       setStep(2);
     } catch (error) {
       toast.error(error.response?.data?.msg || "Failed to send reset code. Check your input.");
@@ -82,11 +77,7 @@ function ForgotPassword() {
     setLoading(true);
     try {
       const { data } = await API.post("/auth/forgot-password", { identifier: identifier || email });
-      if (data.devOtp && !data.emailSent) {
-        setDevCode(data.devOtp);
-        toast.info(`🔑 New Reset Code: ${data.devOtp}`, { autoClose: 10000 });
-      }
-      toast.success("A new reset code has been sent!");
+      toast.success(data.msg || "A new reset code has been sent to your email!");
     } catch (error) {
       toast.error(error.response?.data?.msg || "Failed to resend code");
     } finally {
@@ -103,21 +94,6 @@ function ForgotPassword() {
             ? "Enter your account email or username to receive a reset code"
             : `Enter the 6-digit code sent to ${email}`}
         </p>
-
-        {devCode && (
-          <div style={{
-            background: 'rgba(59, 130, 246, 0.1)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
-            padding: '12px',
-            borderRadius: '8px',
-            marginBottom: '20px',
-            textAlign: 'center',
-            color: '#60a5fa',
-            fontSize: '0.9rem'
-          }}>
-            🔑 Reset Code: <strong style={{ letterSpacing: '3px', fontSize: '1.2rem', color: '#93c5fd' }}>{devCode}</strong>
-          </div>
-        )}
 
         {step === 1 ? (
           <form onSubmit={handleRequestOtp}>
