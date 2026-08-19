@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MyApplications from "./pages/MyApplications";
 import Profile from "./pages/Profile";
 import VerifyOtp from "./pages/VerifyOtp";
+import ForgotPassword from "./pages/ForgotPassword";
 
 import NotFound from "./pages/NotFound";
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route
           path="/student"
