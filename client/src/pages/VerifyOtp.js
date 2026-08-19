@@ -11,7 +11,6 @@ function VerifyOtp() {
     email: initialEmail,
     otp: "",
   });
-  const [devCode, setDevCode] = useState(location.state?.devOtp || null);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
 
@@ -56,11 +55,7 @@ function VerifyOtp() {
     setResending(true);
     try {
       const { data } = await API.post("/auth/resend-otp", { email: form.email.trim() });
-      if (data.devOtp && !data.emailSent) {
-        setDevCode(data.devOtp);
-        toast.info(`🔑 New Verification OTP: ${data.devOtp}`, { autoClose: 10000 });
-      }
-      toast.success(data.msg || "New OTP sent!");
+      toast.success(data.msg || "New OTP sent to your email!");
     } catch (error) {
       toast.error(error.response?.data?.msg || "Failed to resend OTP");
     } finally {
@@ -76,21 +71,6 @@ function VerifyOtp() {
           Enter the 6-digit OTP sent to <br />
           <strong style={{ color: 'var(--primary)', fontSize: '1rem' }}>{form.email || "your registered email"}</strong>
         </p>
-
-        {devCode && (
-          <div style={{
-            background: 'rgba(99, 102, 241, 0.1)',
-            border: '1px solid rgba(99, 102, 241, 0.3)',
-            padding: '12px',
-            borderRadius: '8px',
-            marginBottom: '20px',
-            textAlign: 'center',
-            color: '#818cf8',
-            fontSize: '0.9rem'
-          }}>
-            🔑 Verification Code: <strong style={{ letterSpacing: '3px', fontSize: '1.2rem', color: '#c7d2fe' }}>{devCode}</strong>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit}>
           {!initialEmail && (
