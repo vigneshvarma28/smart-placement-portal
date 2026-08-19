@@ -129,6 +129,25 @@ function Login() {
             </button>
           </div>
 
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '5px', marginBottom: '15px' }}>
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary)',
+                cursor: 'pointer',
+                fontSize: '0.88rem',
+                fontWeight: '600',
+                padding: '0',
+                textDecoration: 'none'
+              }}
+            >
+              Forgot Password?
+            </button>
+          </div>
+
           <button type="submit" className="auth-btn" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
