@@ -20,6 +20,8 @@ const userSchema = new mongoose.Schema({
   },
   otp: String,
   otpExpiry: Date,
+  resetOtp: String,
+  resetOtpExpiry: Date,
   resume: String,
   mobile: String,
   experience: { type: Number, default: 0 },
