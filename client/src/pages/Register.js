@@ -30,10 +30,16 @@ function Register() {
         skills: [], // Skills will be added via resume analysis after login
       };
 
-      await API.post("/auth/register", payload);
+      const { data } = await API.post("/auth/register", payload);
 
-      toast.success("OTP sent to email! Please verify.");
-      navigate("/verify-otp", { state: { email: form.email } });
+      sessionStorage.setItem("verifyEmail", form.email);
+      toast.success(data.msg || "OTP sent! Please verify your account.");
+
+      if (data.devOtp && !data.emailSent) {
+        toast.info(`🔑 Verification OTP: ${data.devOtp}`, { autoClose: 10000 });
+      }
+
+      navigate("/verify-otp", { state: { email: form.email, devOtp: data.devOtp } });
 
     } catch (error) {
       toast.error(error.response?.data?.msg || "Registration Failed");
