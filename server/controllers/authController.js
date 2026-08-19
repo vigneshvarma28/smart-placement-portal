@@ -25,11 +25,14 @@ exports.register = async (req, res) => {
         existingUser.otpExpiry = Date.now() + 5 * 60 * 1000;
         await existingUser.save();
         const emailRes = await sendEmail(lowerEmail, newOtp);
+        if (!emailRes.success) {
+          return res.status(500).json({ 
+            msg: "Failed to send verification email. Please ensure the email sender is properly configured." 
+          });
+        }
         return res.json({ 
-          msg: "Account exists but is unverified. New OTP sent!", 
-          email: lowerEmail,
-          devOtp: newOtp,
-          emailSent: emailRes.success 
+          msg: "Account exists but is unverified. Verification OTP sent to your email!", 
+          email: lowerEmail 
         });
       }
       return res.status(400).json({ msg: "User or Email already exists" });
@@ -52,11 +55,15 @@ exports.register = async (req, res) => {
 
     const emailRes = await sendEmail(lowerEmail, otp);
 
+    if (!emailRes.success) {
+      return res.status(500).json({ 
+        msg: "Failed to send OTP to your email. Please ensure the email sender is properly configured." 
+      });
+    }
+
     res.json({ 
-      msg: emailRes.success ? "OTP sent to your email" : "OTP generated (Check console/dev mode)", 
-      email: lowerEmail,
-      devOtp: otp,
-      emailSent: emailRes.success 
+      msg: "OTP sent to your email! Please check your inbox.", 
+      email: lowerEmail 
     });
 
   } catch (error) {
@@ -81,11 +88,15 @@ exports.resendOtp = async (req, res) => {
 
     const emailRes = await sendEmail(user.email, newOtp);
 
+    if (!emailRes.success) {
+      return res.status(500).json({ 
+        msg: "Failed to send verification email. Please check server email configuration." 
+      });
+    }
+
     res.json({ 
-      msg: emailRes.success ? "New verification OTP sent to your email" : "New OTP generated",
-      email: user.email,
-      devOtp: newOtp,
-      emailSent: emailRes.success
+      msg: "New verification OTP sent to your email! Please check your inbox.",
+      email: user.email
     });
   } catch (error) {
     logger.error(`Resend OTP Error: ${error.message}`);
@@ -187,13 +198,15 @@ exports.forgotPassword = async (req, res) => {
 
     const emailRes = await sendResetPasswordEmail(user.email, resetOtp);
 
+    if (!emailRes.success) {
+      return res.status(500).json({ 
+        msg: "Failed to send password reset email. Please ensure the email service is properly configured." 
+      });
+    }
+
     res.json({
-      msg: emailRes.success 
-        ? "Password reset code sent to your email!" 
-        : "Reset code generated (Check console/dev mode)",
-      email: user.email,
-      devOtp: resetOtp,
-      emailSent: emailRes.success
+      msg: "Password reset code sent to your email! Please check your inbox.",
+      email: user.email
     });
 
   } catch (error) {
