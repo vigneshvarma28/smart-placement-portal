@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Placement Portal - Detailed Project Report</title>
+    <style>
+        :root {
+            --primary: #059669;
+            --secondary: #0f172a;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            background: #fff;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        code {
+            background: #f1f5f9;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .footer {
+            margin-top: 60px;
+            font-size: 0.9rem;
+            color: #64748b;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="print-btn" onclick="window.print()">Download as PDF</button>
+
+    <div class="header">
+        <h1>Smart Placement Portal</h1>
+        <p>Comprehensive Technical Project Documentation</p>
+        <p><em>Generated on: 2026-02-25</em></p>
+    </div>
+
+    <h2>1. Project Vision</h2>
+    <p>The Smart Placement Portal is an advanced recruitment management system featuring automated resume scanning,
+        skill profiling, and intelligent job recommendations driven by Machine Learning algorithms.</p>
+
+    <h2>2. Technical Architecture</h2>
+    <h3>Frontend</h3>
+    <p>Developed with <strong>React 19</strong>, utilizing a custom-built design system with glassmorphism and real-time
+        toast notifications.</p>
+    <h3>Backend</h3>
+    <p>A Node.js/Express server providing a secure RESTful API. Authenticated via Stateless JWT with Bcrypt hashing for
+        password security.</p>
+    <h3>ML / Intelligence</h3>
+    <p>A Python microservice that performs <strong>TF-IDF Vectorization</strong> and <strong>Cosine Similarity</strong>
+        analysis to match student skills with job requirements.</p>
+
+    <h2>3. Directory Structure</h2>
+    <pre>
+/smart-placement-portal
+├── /client (React)
+├── /server (Express)
+└── /ml-service (Python/Flask)
+    </pre>
+
+    <h2>4. Data Schema (Simplified)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Core Responsibility</th>
+                <th>Key Fields</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>User</td>
+                <td>Identity Management</td>
+                <td>name, email, username, role, skills, resume</td>
+            </tr>
+            <tr>
+                <td>Job</td>
+                <td>Opportunity Tracking</td>
+                <td>title, company_id, skills_required, deadline</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>5. Key Systems</h2>
+    <ul>
+        <li><strong>Unified Login:</strong> Login via Email, Username, or Company Name.</li>
+        <li><strong>Smart Filtering:</strong> Real-time filtering of jobs by deadline.</li>
+        <li><strong>PDF Analysis:</strong> Server-side text extraction and skill tagging.</li>
+    </ul>
+
+    <div class="footer">
+        © 2026 Smart Placement Portal | Generated by Antigravity AI
+    </div>
+</body>
+
+</html>
