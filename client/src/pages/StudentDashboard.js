@@ -200,7 +200,7 @@ function StudentDashboard() {
             {user?.resume && (
               <div style={{ marginTop: '10px' }}>
                 <a
-                  href={`${(process.env.REACT_APP_API_URL || "http://localhost:5000/api").replace("/api", "")}/uploads/${user.resume}`}
+                  href={`${(process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace(/\/api\/?$/, "") : "")}/uploads/${user.resume}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -395,8 +395,6 @@ function StudentDashboard() {
           {recommended
             .filter(job => !applications.some(app => app.jobId === job._id))
             .map((job) => {
-              const { hasMatch, missingSkills, matchedSkills } = getSkillMatch(job);
-
               return (
                 <div className="card" key={job._id}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>

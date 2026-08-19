@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: smart-placement-db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  # ML Recommendation Service (Python Flask)
+  ml-service:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: smart-placement-ml
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+
+  # Main Web App (Express API + React Frontend)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart-placement-web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/placement
+      - JWT_SECRET=smartplacementproductionsecretkey12345
+      - ML_SERVICE_URL=http://ml-service:5001
+      - EMAIL_USER=${EMAIL_USER:-}
+      - EMAIL_PASS=${EMAIL_PASS:-}
+    depends_on:
+      - mongodb
+      - ml-service
+
+volumes:
+  mongo-data:

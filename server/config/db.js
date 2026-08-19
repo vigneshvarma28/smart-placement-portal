@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { MongoMemoryServer } = require("mongodb-memory-server");
 const User = require("../models/User");
 const Job = require("../models/Job");
 const bcrypt = require("bcryptjs");
@@ -114,22 +113,32 @@ const connectDB = async () => {
   const defaultUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/placement";
 
   try {
-    // Try connecting to external / local MongoDB instance first (2.5s timeout)
+    // Try connecting to external / local MongoDB instance first (5s timeout)
     await mongoose.connect(defaultUri, {
-      serverSelectionTimeoutMS: 2500,
+      serverSelectionTimeoutMS: 5000,
     });
-    console.log(`✅ MongoDB Connected to: ${defaultUri}`);
+    const safeUri = defaultUri.includes("@") ? defaultUri.split("@")[1] : defaultUri;
+    console.log(`✅ MongoDB Connected to: ${safeUri}`);
   } catch (error) {
-    console.log(`⚠️ Local MongoDB not found on ${defaultUri}.`);
-    console.log(`🚀 Starting embedded MongoDB engine...`);
+    console.log(`⚠️ Primary MongoDB connection attempt to ${defaultUri.includes("@") ? defaultUri.split("@")[1] : defaultUri} failed: ${error.message}`);
+
+    // If a remote MONGO_URI is explicitly specified in production, fail clearly
+    if (process.env.NODE_ENV === "production" && process.env.MONGO_URI && !process.env.MONGO_URI.includes("127.0.0.1") && !process.env.MONGO_URI.includes("localhost")) {
+      console.error("❌ Failed to connect to MongoDB Atlas. Please ensure MONGO_URI is correct and IP 0.0.0.0/0 is whitelisted in MongoDB Atlas Network Access.");
+      process.exit(1);
+    }
+
+    console.log(`🚀 Attempting to start embedded MongoDB engine for local dev fallback...`);
 
     try {
+      const { MongoMemoryServer } = require("mongodb-memory-server");
       mongodInstance = await MongoMemoryServer.create();
       const embeddedUri = mongodInstance.getUri();
       await mongoose.connect(embeddedUri);
       console.log(`✅ Connected to Embedded MongoDB at: ${embeddedUri}`);
     } catch (embeddedErr) {
-      console.error("❌ Failed to start embedded MongoDB:", embeddedErr);
+      console.error("❌ Could not connect to MongoDB and embedded MongoDB is unavailable:", embeddedErr.message);
+      console.error("💡 Please configure a valid MONGO_URI environment variable (e.g. MongoDB Atlas).");
       process.exit(1);
     }
   }
@@ -138,3 +147,4 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+

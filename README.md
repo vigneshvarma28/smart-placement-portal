@@ -32,10 +32,11 @@ Double-click `start_prod.bat`. This will:
 ---
 
 ## 📦 Deployment Ready
-This application is structured for easy deployment:
-- **Frontend**: Can be built via `npm run build` and served via Nginx/Netlify.
-- **Backend**: Standard Node.js app, ready for Heroku/Render.
-- **ML Service**: Flask app, can be deployed as a microservice (e.g., on Render/PythonAnywhere).
+This application is structured for easy cloud deployment:
+- **Render (1-Click Blueprint)**: Pre-configured [`render.yaml`](./render.yaml) automatically deploys both Web & ML services.
+- **Docker**: Full production compose stack ready via [`docker-compose.yml`](./docker-compose.yml).
+
+👉 **See the complete [Deployment Guide](DEPLOYMENT.md) for step-by-step instructions.**
 
 ## 🔧 Manual Startup Instructions
 
