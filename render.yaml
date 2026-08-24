@@ -2,7 +2,7 @@ services:
   # 1. Main Application (Node.js + React Frontend)
   - type: web
     name: smart-placement-api
-    env: node
+    runtime: node
     plan: free
     # Build Command: Install client deps, build client, install server deps
     buildCommand: cd client && npm install && npm run build && cd ../server && npm install
@@ -21,7 +21,7 @@ services:
         fromService:
           type: web
           name: smart-placement-ml
-          property: url
+          envVarKey: RENDER_EXTERNAL_URL
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASS
@@ -30,7 +30,7 @@ services:
   # 2. ML Service (Python Flask)
   - type: web
     name: smart-placement-ml
-    env: python
+    runtime: python
     plan: free
     rootDir: ml-service
     buildCommand: pip install -r requirements.txt
